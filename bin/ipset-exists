@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+firewall-cmd --permanent --get-ipsets \
+	| tr ' ' '\n' \
+	| grep "^$1$" >/dev/null

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -x
+firewall-cmd --permanent --zone public --add-port=$1/tcp

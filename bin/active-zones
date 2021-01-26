@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+firewall-cmd --get-active-zones \
+	| grep '^[^ ]' \
+	| xargs -I {} firewall-cmd --permanent --info-zone {}

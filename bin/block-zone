@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+ZONES=$HOME/zones
+
+function get_ipset() {
+	echo "$1"
+}
+
+function get_zone() {
+	echo "$ZONES/$1.zone"
+}
+
+function add_entries() {
+	firewall-cmd --permanent \
+		--ipset $(get_ipset $1) \
+		--add-entries-from-file $(get_zone $1)
+}
+
+function remove_entries() {
+	local TEMP=$(mktemp)
+	firewall-cmd --permanent \
+		--ipset $(get_ipset $1) \
+		--get-entries \
+		>$TEMP
+	firewall-cmd --permanent \
+		--ipset $(get_ipset $1) \
+		--remove-entries-from-file $TEMP
+}
+
+if [ "$1" = "" ]; then
+	echo "you didn't provide a country to block"
+	exit 1
+fi
+
+if ! [ -e $(get_zone $1) ]; then
+	echo "don't recognize that country (cannot find $(get_zone $1))"
+        echo "check $ZONES for available zones."
+	exit 2
+fi
+
+if ipset-exists $(get_ipset $1); then
+	echo "ipset already exists. removing existing entries."
+	remove_entries $1
+else
+	echo "ipset does not exist. creating new ipset."
+	create-ipset $(get_ipset $1)
+fi
+
+echo "adding entries to ipset"
+add_entries $1
+
+echo "you should reload: firewall-cmd --reload"

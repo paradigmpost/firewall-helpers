@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+if [ "$1" = "" ]; then
+	echo "error: did not provide an ip/mask to blacklist."
+	exit 1
+fi
+
+if ! ipset-exists blacklist; then
+	echo "ipset 'blacklist' does not exist. creating..."
+	create-ipset blacklist
+fi
+
+echo "adding $1 to ipset 'blacklist'"
+firewall-cmd --permanent --ipset blacklist --remove-entry $1 \
+	>/dev/null 2>&1
+firewall-cmd --permanent --ipset blacklist --add-entry $1
+
+echo "you should reload: firewall-cmd --reload"

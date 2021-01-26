@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+ARCHIVE=all-zones.tar.gz
+URL=http://www.ipdeny.com/ipblocks/data/countries/$ARCHIVE
+
+echo "refreshing known ip zones"
+
+# (re)download all-zones archive
+cd $HOME
+curl -fsSL -o $ARCHIVE $URL
+
+# extract to $HOME/zones/
+mkdir -p zones/
+tar xzf $ARCHIVE -C zones/
+
+echo "done"

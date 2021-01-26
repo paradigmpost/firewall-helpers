@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+firewall-cmd --permanent \
+	--new-ipset $1 \
+	--type hash:net \
+	--option hashsize=65536 \
+	--option maxelem=524288 \
+	>/dev/null
+firewall-cmd --permanent \
+	--zone drop \
+	--add-source ipset:$1
+
